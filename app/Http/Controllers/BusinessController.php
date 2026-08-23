@@ -22,7 +22,7 @@ class BusinessController extends Controller
      */
     public function create()
     {
-        //
+        return view('businesses.create');
     }
 
     /**
@@ -30,38 +30,64 @@ class BusinessController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'website' => ['required', 'url', 'max:255'],
+            'industry' => ['nullable', 'string', 'max:255'],
+            'location' => ['nullable', 'string', 'max:255'],
+            'contact_name' => ['nullable', 'string', 'max:255'],
+            'contact_email' => ['nullable', 'email', 'max:255'],
+            'notes' => ['nullable', 'string'],
+        ]);
+
+        $business = Business::create($validated);
+
+        return redirect()->route('businesses.show', $business);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Business $business)
     {
-        //
+        return view('businesses.show', compact('business'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Business $business)
     {
-        //
+        return view('businesses.edit', compact('business'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Business $business)
     {
-        //
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'website' => ['required', 'url', 'max:255'],
+            'industry' => ['nullable', 'string', 'max:255'],
+            'location' => ['nullable', 'string', 'max:255'],
+            'contact_name' => ['nullable', 'string', 'max:255'],
+            'contact_email' => ['nullable', 'email', 'max:255'],
+            'notes' => ['nullable', 'string'],
+        ]);
+
+        $business->update($validated);
+
+        return redirect()->route('businesses.show', $business);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Business $business)
     {
-        //
+        $business->delete();
+
+        return redirect()->route('businesses.index');
     }
 }
