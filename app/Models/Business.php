@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Scan;
 
 class Business extends Model
 {
@@ -16,4 +17,15 @@ class Business extends Model
         'status',
         'notes',
     ];
+
+    /**
+     * Set relationship between scans and businesses
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\Scan>
+     */
+    public function scans()
+    {
+        return $this->hasMany(Scan::class);
+    }
+
 }
