@@ -16,5 +16,6 @@ Route::resource('businesses', BusinessController::class);
 Route::get('/scans/{scan}', [ScanController::class, 'show'])->name('scans.show');
 
 // Candidate routes
+Route::get('/candidates', [CandidateController::class, 'index'])->name('candidates.index');
 Route::get('/candidates/{candidate}', [CandidateController::class, 'show'])->name('candidates.show');
 Route::post('/candidates/{candidate}/accept', [CandidateController::class, 'accept'])->name('candidates.accept');

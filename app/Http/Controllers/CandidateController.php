@@ -13,6 +13,13 @@ class CandidateController extends Controller
         return view('candidates.show', compact('candidate'));
     }
 
+    public function index()
+    {
+        $candidates = Candidate::latest()->get();
+
+        return view('candidates.index', compact('candidates'));
+    }
+
     /**
      * Accept candidate as a business target, create business entry
      * and update candidate entry to reflect that change

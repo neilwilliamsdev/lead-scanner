@@ -1,25 +1,17 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="mb-8 flex items-center justify-between">
-        <div>
-            <h1 class="text-2xl font-semibold">Businesses</h1>
-            <p class="mt-1 text-sm text-gray-500">
-                Businesses you've accepted as potential leads.
-            </p>
-        </div>
+    <div class="mb-8">
+        <h1 class="text-2xl font-semibold">Candidates</h1>
 
-        <a
-            href="{{ route('businesses.create') }}"
-            class="rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700"
-        >
-            Add business
-        </a>
+        <p class="mt-1 text-sm text-gray-500">
+            Businesses discovered but not yet accepted into the CRM.
+        </p>
     </div>
 
-    @if ($businesses->isEmpty())
+    @if ($candidates->isEmpty())
         <div class="rounded-lg border border-gray-200 bg-white p-8 text-center">
-            <p class="text-gray-500">No businesses yet.</p>
+            <p class="text-gray-500">No candidates yet.</p>
         </div>
     @else
         <div class="overflow-hidden rounded-lg border border-gray-200 bg-white">
@@ -27,7 +19,7 @@
                 <thead class="bg-gray-50">
                     <tr>
                         <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
-                            Name
+                            Business
                         </th>
                         <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
                             Website
@@ -42,27 +34,27 @@
                 </thead>
 
                 <tbody class="divide-y divide-gray-200">
-                    @foreach ($businesses as $business)
+                    @foreach ($candidates as $candidate)
                         <tr class="hover:bg-gray-50">
                             <td class="px-6 py-4">
                                 <a
-                                    href="{{ route('businesses.show', $business) }}"
+                                    href="{{ route('candidates.show', $candidate) }}"
                                     class="font-medium text-blue-600 hover:text-blue-800 hover:underline"
                                 >
-                                    {{ $business->name }}
+                                    {{ $candidate->name }}
                                 </a>
                             </td>
 
                             <td class="px-6 py-4 text-sm text-gray-600">
-                                {{ $business->website }}
+                                {{ $candidate->domain }}
                             </td>
 
                             <td class="px-6 py-4 text-sm text-gray-600">
-                                {{ $business->location ?? '—' }}
+                                {{ $candidate->location ?? '—' }}
                             </td>
 
                             <td class="px-6 py-4 text-sm text-gray-600">
-                                {{ $business->status }}
+                                {{ $candidate->status }}
                             </td>
                         </tr>
                     @endforeach
