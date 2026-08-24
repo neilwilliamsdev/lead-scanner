@@ -19,3 +19,6 @@ Route::get('/scans/{scan}', [ScanController::class, 'show'])->name('scans.show')
 Route::get('/candidates', [CandidateController::class, 'index'])->name('candidates.index');
 Route::get('/candidates/{candidate}', [CandidateController::class, 'show'])->name('candidates.show');
 Route::post('/candidates/{candidate}/accept', [CandidateController::class, 'accept'])->name('candidates.accept');
+
+// Dsicovery Run routes
+Route::get('/discovery-runs', [App\Http\Controllers\DiscoveryRunController::class, 'index'])->name('discovery-runs.index');

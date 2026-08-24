@@ -32,6 +32,12 @@
             >
                 Candidates
             </a>
+            <a
+                href="{{ route('discovery-runs.index') }}"
+                class="text-sm font-medium text-gray-600 hover:text-gray-900"
+            >
+                Discovery Runs
+            </a>
         </nav>
     </header>
 
