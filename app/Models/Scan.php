@@ -6,6 +6,24 @@ use Illuminate\Database\Eloquent\Model;
 
 class Scan extends Model
 {
+
+    // The attributes that are mass assignable.
+    protected $fillable = [
+        'business_id',
+        'status',
+        'score',
+        'results',
+        'started_at',
+        'completed_at',
+    ];
+
+    // The attributes that should be cast to native types.
+    protected $casts = [
+        'results' => 'array',
+        'started_at' => 'datetime',
+        'completed_at' => 'datetime',
+    ];
+
     /**
      * Set relationship between scans and businesses
      *

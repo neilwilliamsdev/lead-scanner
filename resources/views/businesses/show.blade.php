@@ -72,4 +72,27 @@
             </button>
         </form>
     </div>
+
+    <h2>Scans</h2>
+
+    @if ($business->scans->isEmpty())
+        <p>No scans yet.</p>
+    @else
+        <ul>
+            @foreach ($business->scans as $scan)
+                <li>
+                    <a href="{{ route('scans.show', $scan) }}">
+                        Scan #{{ $scan->id }}
+                    </a>
+
+                    — {{ $scan->status }}
+
+                    @if ($scan->score !== null)
+                        — Score: {{ $scan->score }}
+                    @endif
+                </li>
+            @endforeach
+        </ul>
+    @endif
+
 @endsection

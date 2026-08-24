@@ -50,6 +50,10 @@ class BusinessController extends Controller
      */
     public function show(Business $business)
     {
+
+        // Load the scans relationship for the business
+        $business->load('scans');
+
         return view('businesses.show', compact('business'));
     }
 
