@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Scan;
+use App\Models\Candidate;
 
 class Business extends Model
 {
@@ -28,4 +29,13 @@ class Business extends Model
         return $this->hasMany(Scan::class);
     }
 
+    /**
+     * Set relationship between candidates and businesses
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\Candidate>
+     */
+    public function candidates()
+    {
+        return $this->hasMany(Candidate::class);
+    }
 }
