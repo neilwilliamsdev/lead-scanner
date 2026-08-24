@@ -48,7 +48,12 @@
                     @foreach ($discoveryRuns as $run)
                         <tr class="hover:bg-gray-50">
                             <td class="px-6 py-4 font-medium">
-                                #{{ $run->id }}
+                                <a
+                                    href="{{ route('discovery-runs.show', $run) }}"
+                                    class="text-blue-600 hover:text-blue-800 hover:underline"
+                                >
+                                    #{{ $run->id }}
+                                </a>
                             </td>
 
                             <td class="px-6 py-4 text-sm text-gray-600">
