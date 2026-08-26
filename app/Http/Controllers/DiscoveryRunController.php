@@ -27,6 +27,13 @@ class DiscoveryRunController extends Controller
         return view('discovery-runs.show', compact('discoveryRun'));
     }
 
+    public function status(DiscoveryRun $discoveryRun)
+    {
+        return response()->json([
+            'status' => $discoveryRun->status,
+        ]);
+    }
+
     public function store(Request $request)
     {
         $validated = $request->validate([

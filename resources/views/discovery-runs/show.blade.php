@@ -135,3 +135,29 @@
         @endif
     </div>
 @endsection
+
+@if (in_array($discoveryRun->status, ['pending', 'running']))
+    <script>
+        const statusUrl = @json(route('discovery-runs.status', $discoveryRun));
+
+        const poll = async () => {
+            try {
+                const response = await fetch(statusUrl);
+
+                if (!response.ok) {
+                    return;
+                }
+
+                const data = await response.json();
+
+                if (['completed', 'failed'].includes(data.status)) {
+                    window.location.reload();
+                }
+            } catch (error) {
+                console.error('Unable to check discovery status.', error);
+            }
+        };
+
+        const interval = setInterval(poll, 2000);
+    </script>
+@endif
