@@ -20,9 +20,6 @@
             </a>
         </div>
 
-        <p class="mt-1 text-sm text-gray-500">
-            Previous and current business discovery runs.
-        </p>
     </div>
 
     @if ($discoveryRuns->isEmpty())

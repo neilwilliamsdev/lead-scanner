@@ -2,11 +2,13 @@
 
 namespace App\Jobs;
 
+use App\Discovery\DiscoverySource;
 use App\Models\DiscoveryRun;
-use App\Models\Candidate;
+use App\Models\Technology;
 use App\Technology\Detectors\WordPressDetector;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Support\Str;
 
 class DiscoverBusinesses implements ShouldQueue
 {
@@ -17,7 +19,7 @@ class DiscoverBusinesses implements ShouldQueue
     ) {
     }
 
-    public function handle(): void
+    public function handle(DiscoverySource $source): void
     {
 
         // Update the discovery run status to 'running' and set the started_at timestamp
@@ -26,41 +28,31 @@ class DiscoverBusinesses implements ShouldQueue
             'started_at' => now(),
         ]);
 
-        // Simulate the discovery process (this is where you would implement the actual discovery logic)
         $detector = new WordPressDetector();
 
-        // Dummy candidates for demonstration purposes
-        $candidates = [
-            [
-                'name' => 'Example WordPress Business Ltd',
-                'website' => 'https://wordpress.org',
-                'domain' => 'wordpress.org',
-                'location' => $this->discoveryRun->location,
-                'category' => $this->discoveryRun->category,
-                'source' => $this->discoveryRun->source,
-                'status' => 'new',
-            ],
-            [
-                'name' => 'Example Electrical Services',
-                'website' => 'https://example.org',
-                'domain' => 'example.org',
-                'location' => $this->discoveryRun->location,
-                'category' => $this->discoveryRun->category,
-                'source' => $this->discoveryRun->source,
-                'status' => 'new',
-            ],
-        ];
+        $businesses = $source->search(
+            $this->discoveryRun->category,
+            $this->discoveryRun->location
+        );
 
-        // Process each candidate and detect if they are using WordPress
-        foreach ($candidates as $candidateData) {
-            $candidate = $this->discoveryRun->candidates()->create($candidateData);
+        foreach ($businesses as $businessData) {
+            $candidate = $this->discoveryRun->candidates()->create([
+                'name' => $businessData['name'],
+                'website' => $businessData['website'],
+                'domain' => parse_url($businessData['website'], PHP_URL_HOST),
+                'location' => $this->discoveryRun->location,
+                'category' => $this->discoveryRun->category,
+                'source' => $this->discoveryRun->source,
+                'source_id' => $businessData['source_id'],
+                'status' => 'new',
+            ]);
 
             $technology = $detector->detect($candidate->website);
 
             if ($technology) {
-                $technologyModel = \App\Models\Technology::firstOrCreate(
+                $technologyModel = Technology::firstOrCreate(
                     [
-                        'slug' => \Illuminate\Support\Str::slug($technology->name),
+                        'slug' => Str::slug($technology->name),
                     ],
                     [
                         'name' => $technology->name,
@@ -73,7 +65,7 @@ class DiscoverBusinesses implements ShouldQueue
 
         $this->discoveryRun->update([
             'status' => 'completed',
-            'candidates_found' => count($candidates),
+            'candidates_found' => count($businesses),
             'completed_at' => now(),
         ]);
     }

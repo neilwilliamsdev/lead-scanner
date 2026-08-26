@@ -11,7 +11,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        // Bind the DiscoverySource interface to the GooglePlacesSource implementation
+        $this->app->bind(
+            \App\Discovery\DiscoverySource::class,
+            \App\Discovery\GooglePlacesSource::class
+        );
     }
 
     /**
