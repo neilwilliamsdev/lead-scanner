@@ -52,17 +52,23 @@ class DiscoverBusinesses implements ShouldQueue
         ];
 
         // Process each candidate and detect if they are using WordPress
-        foreach ($candidates as $candidate) {
+        foreach ($candidates as $candidateData) {
+            $candidate = $this->discoveryRun->candidates()->create($candidateData);
 
-            // Detect if the candidate's website is using WordPress
-            $technology = $detector->detect($candidate['website']);
+            $technology = $detector->detect($candidate->website);
 
-            // Add the is_wordpress field to the candidate data
-            $candidate['is_wordpress'] = $technology?->name === 'WordPress';
+            if ($technology) {
+                $technologyModel = \App\Models\Technology::firstOrCreate(
+                    [
+                        'slug' => \Illuminate\Support\Str::slug($technology->name),
+                    ],
+                    [
+                        'name' => $technology->name,
+                    ]
+                );
 
-            // Create the candidate record in the database
-            $this->discoveryRun->candidates()->create($candidate);
-
+                $candidate->technologies()->attach($technologyModel);
+            }
         }
 
         $this->discoveryRun->update([
