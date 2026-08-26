@@ -34,7 +34,6 @@ return new class extends Migration
             $table->string('status')->default('new');
 
             $table->boolean('website_reachable')->nullable();
-            $table->boolean('is_wordpress')->nullable();
 
             $table->timestamps();
         });
