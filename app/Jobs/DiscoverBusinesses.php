@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Discovery\DiscoverySource;
+use App\Models\Business;
 use App\Models\DiscoveryRun;
 use App\Models\Technology;
 use App\Technology\Detectors\WordPressDetector;
@@ -29,18 +30,39 @@ class DiscoverBusinesses implements ShouldQueue
             'started_at' => now(),
         ]);
 
+        // Create an instance of the WordPressDetector
         $detector = new WordPressDetector();
 
+        // Use the discovery source to search for businesses based on the category and location
         $businesses = $source->search(
             $this->discoveryRun->category,
             $this->discoveryRun->location
         );
 
         foreach ($businesses as $businessData) {
+
+            // Extract the domain from the website URL
+            $domain = parse_url($businessData['website'], PHP_URL_HOST);
+
+            // Create or update the business record in the database
+            $business = Business::firstOrCreate(
+                [
+                    'domain' => $domain,
+                ],
+                [
+                    'name' => $businessData['name'],
+                    'website' => $businessData['website'],
+                    'industry' => $this->discoveryRun->category,
+                    'location' => $this->discoveryRun->location,
+                ]
+            );
+
+            // Create a new candidate record associated with the discovery run and the business
             $candidate = $this->discoveryRun->candidates()->create([
+                'business_id' => $business->id,
                 'name' => $businessData['name'],
                 'website' => $businessData['website'],
-                'domain' => parse_url($businessData['website'], PHP_URL_HOST),
+                'domain' => $domain,
                 'location' => $this->discoveryRun->location,
                 'category' => $this->discoveryRun->category,
                 'source' => $this->discoveryRun->source,
@@ -52,12 +74,6 @@ class DiscoverBusinesses implements ShouldQueue
             $website = $websiteChecker->check($candidate->website);
 
             // Update the candidate's website_reachable field based on the result of the website check
-            $candidate->update([
-                'website_reachable' => $website['reachable'],
-            ]);
-
-            $website = $websiteChecker->check($candidate->website);
-
             $candidate->update([
                 'website_reachable' => $website['reachable'],
             ]);
