@@ -2,7 +2,23 @@
 
 @section('content')
     <div class="mb-8">
-        <h1 class="text-2xl font-semibold">Discovery Runs</h1>
+
+        <div class="mb-8 flex items-center justify-between">
+            <div>
+                <h1 class="text-2xl font-semibold">Discovery Runs</h1>
+
+                <p class="mt-1 text-sm text-gray-500">
+                    Previous and current business discovery runs.
+                </p>
+            </div>
+
+            <a
+                href="{{ route('discovery-runs.create') }}"
+                class="rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700"
+            >
+                Start Discovery
+            </a>
+        </div>
 
         <p class="mt-1 text-sm text-gray-500">
             Previous and current business discovery runs.

@@ -53,7 +53,29 @@
     <div>
         <h2 class="mb-4 text-xl font-semibold">Candidates</h2>
 
-        @if ($discoveryRun->candidates->isEmpty())
+        @if (in_array($discoveryRun->status, ['pending', 'running']))
+            <div class="rounded-lg border border-gray-200 bg-white p-6">
+                <p class="font-medium text-gray-900">
+                    Discovery is running…
+                </p>
+
+                <p class="mt-1 text-sm text-gray-500">
+                    Candidates will appear when the discovery completes.
+                </p>
+            </div>
+        @elseif ($discoveryRun->status === 'failed')
+            <div class="rounded-lg border border-red-200 bg-red-50 p-6">
+                <p class="font-medium text-red-800">
+                    Discovery failed.
+                </p>
+
+                @if ($discoveryRun->error)
+                    <p class="mt-1 text-sm text-red-700">
+                        {{ $discoveryRun->error }}
+                    </p>
+                @endif
+            </div>
+        @elseif ($discoveryRun->candidates->isEmpty())
             <div class="rounded-lg border border-gray-200 bg-white p-6">
                 <p class="text-gray-500">
                     No candidates found.

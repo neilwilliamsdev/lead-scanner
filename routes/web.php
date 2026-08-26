@@ -23,4 +23,6 @@ Route::post('/candidates/{candidate}/accept', [CandidateController::class, 'acce
 
 // Discovery Run routes
 Route::get('/discovery-runs', [DiscoveryRunController::class, 'index'])->name('discovery-runs.index');
+Route::get('/discovery-runs/create', [DiscoveryRunController::class, 'create'])->name('discovery-runs.create');
 Route::get('/discovery-runs/{discoveryRun}', [DiscoveryRunController::class, 'show'])->name('discovery-runs.show');
+Route::post('/discovery-runs', [DiscoveryRunController::class, 'store'])->name('discovery-runs.store');
