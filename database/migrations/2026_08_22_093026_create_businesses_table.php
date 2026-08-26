@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('website');
+            $table->string('domain')->unique();
             $table->string('industry')->nullable();
             $table->string('location')->nullable();
             $table->string('contact_name')->nullable();

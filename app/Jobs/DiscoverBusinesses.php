@@ -6,6 +6,7 @@ use App\Discovery\DiscoverySource;
 use App\Models\DiscoveryRun;
 use App\Models\Technology;
 use App\Technology\Detectors\WordPressDetector;
+use App\Website\WebsiteChecker;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Str;
@@ -19,7 +20,7 @@ class DiscoverBusinesses implements ShouldQueue
     ) {
     }
 
-    public function handle(DiscoverySource $source): void
+    public function handle(DiscoverySource $source, WebsiteChecker $websiteChecker): void
     {
 
         // Update the discovery run status to 'running' and set the started_at timestamp
@@ -47,19 +48,36 @@ class DiscoverBusinesses implements ShouldQueue
                 'status' => 'new',
             ]);
 
-            $technology = $detector->detect($candidate->website);
+            // Check if the website is reachable and update the candidate's website_reachable field
+            $website = $websiteChecker->check($candidate->website);
 
-            if ($technology) {
-                $technologyModel = Technology::firstOrCreate(
-                    [
-                        'slug' => Str::slug($technology->name),
-                    ],
-                    [
-                        'name' => $technology->name,
-                    ]
-                );
+            // Update the candidate's website_reachable field based on the result of the website check
+            $candidate->update([
+                'website_reachable' => $website['reachable'],
+            ]);
 
-                $candidate->technologies()->attach($technologyModel);
+            $website = $websiteChecker->check($candidate->website);
+
+            $candidate->update([
+                'website_reachable' => $website['reachable'],
+            ]);
+
+            // Only attempt to detect the technology if the website is reachable
+            if ($website['reachable']) {
+                $technology = $detector->detect($candidate->website);
+
+                if ($technology) {
+                    $technologyModel = Technology::firstOrCreate(
+                        [
+                            'slug' => Str::slug($technology->name),
+                        ],
+                        [
+                            'name' => $technology->name,
+                        ]
+                    );
+
+                    $candidate->technologies()->attach($technologyModel);
+                }
             }
         }
 
