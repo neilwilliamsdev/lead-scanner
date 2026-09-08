@@ -79,14 +79,12 @@
             </div>
 
             <div>
-                <dt class="text-sm font-medium text-gray-500">WordPress</dt>
+                <dt class="text-sm font-medium text-gray-500">Technologies</dt>
                 <dd class="mt-1">
-                    @if ($candidate->is_wordpress === null)
-                        Unknown
-                    @elseif ($candidate->is_wordpress)
-                        Yes
+                    @if ($candidate->technologies->isNotEmpty())
+                        {{ $candidate->technologies->pluck('name')->join(', ') }}
                     @else
-                        No
+                        Unknown
                     @endif
                 </dd>
             </div>

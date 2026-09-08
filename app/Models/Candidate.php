@@ -21,12 +21,10 @@ class Candidate extends Model
         'source_id',
         'status',
         'website_reachable',
-        'is_wordpress',
     ];
 
     protected $casts = [
         'website_reachable' => 'boolean',
-        'is_wordpress' => 'boolean',
     ];
 
     /**
