@@ -6,7 +6,7 @@ use App\Discovery\DiscoverySource;
 use App\Models\Business;
 use App\Models\DiscoveryRun;
 use App\Models\Technology;
-use App\Technology\Detectors\WordPressDetector;
+use App\Technology\TechnologyDetectorManager;
 use App\Website\WebsiteChecker;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
@@ -21,19 +21,18 @@ class DiscoverBusinesses implements ShouldQueue
     ) {
     }
 
-    public function handle(DiscoverySource $source, WebsiteChecker $websiteChecker): void
-    {
-
+    public function handle(
+        DiscoverySource $source,
+        WebsiteChecker $websiteChecker,
+        TechnologyDetectorManager $technologyDetectorManager
+    ): void {
         // Update the discovery run status to 'running' and set the started_at timestamp
         $this->discoveryRun->update([
             'status' => 'running',
             'started_at' => now(),
         ]);
 
-        // Create an instance of the WordPressDetector
-        $detector = new WordPressDetector();
-
-        // Use the discovery source to search for businesses based on the category and location
+        // Use the discovery source to search for businesses
         $businesses = $source->search(
             $this->discoveryRun->category,
             $this->discoveryRun->location
@@ -44,7 +43,7 @@ class DiscoverBusinesses implements ShouldQueue
             // Extract the domain from the website URL
             $domain = parse_url($businessData['website'], PHP_URL_HOST);
 
-            // Create or update the business record in the database
+            // Create the business if it doesn't already exist
             $business = Business::firstOrCreate(
                 [
                     'domain' => $domain,
@@ -57,7 +56,7 @@ class DiscoverBusinesses implements ShouldQueue
                 ]
             );
 
-            // Create a new candidate record associated with the discovery run and the business
+            // Create a candidate associated with this discovery run and business
             $candidate = $this->discoveryRun->candidates()->create([
                 'business_id' => $business->id,
                 'name' => $businessData['name'],
@@ -70,19 +69,20 @@ class DiscoverBusinesses implements ShouldQueue
                 'status' => 'new',
             ]);
 
-            // Check if the website is reachable and update the candidate's website_reachable field
+            // Check whether the website is reachable
             $website = $websiteChecker->check($candidate->website);
 
-            // Update the candidate's website_reachable field based on the result of the website check
             $candidate->update([
                 'website_reachable' => $website['reachable'],
             ]);
 
-            // Only attempt to detect the technology if the website is reachable
+            // Detect technologies if the website is reachable
             if ($website['reachable']) {
-                $technology = $detector->detect($candidate->website);
+                $technologies = $technologyDetectorManager->detect(
+                    $candidate->website
+                );
 
-                if ($technology) {
+                foreach ($technologies as $technology) {
                     $technologyModel = Technology::firstOrCreate(
                         [
                             'slug' => Str::slug($technology->name),
@@ -97,6 +97,7 @@ class DiscoverBusinesses implements ShouldQueue
             }
         }
 
+        // Mark the discovery run as completed
         $this->discoveryRun->update([
             'status' => 'completed',
             'candidates_found' => count($businesses),

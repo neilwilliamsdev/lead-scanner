@@ -16,6 +16,16 @@ class AppServiceProvider extends ServiceProvider
             \App\Discovery\DiscoverySource::class,
             \App\Discovery\GooglePlacesSource::class
         );
+
+        // Register the technology detector manager
+        $this->app->bind(
+            \App\Technology\TechnologyDetectorManager::class,
+            function () {
+                return new \App\Technology\TechnologyDetectorManager([
+                    new \App\Technology\Detectors\WordPressDetector(),
+                ]);
+            }
+        );
     }
 
     /**
