@@ -12,8 +12,10 @@ class BusinessController extends Controller
      */
     public function index()
     {
+        // Retrieve all businesses ordered by latest
         $businesses = Business::latest()->get();
 
+        // Pass the retrieved businesses to the view
         return view('businesses.index', compact('businesses'));
     }
 
@@ -30,6 +32,7 @@ class BusinessController extends Controller
      */
     public function store(Request $request)
     {
+        // Validate the incoming request data
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'website' => ['required', 'url', 'max:255'],
@@ -40,8 +43,10 @@ class BusinessController extends Controller
             'notes' => ['nullable', 'string'],
         ]);
 
+        // Create a new business record with the validated data
         $business = Business::create($validated);
 
+        // Redirect to the newly created business's detail page
         return redirect()->route('businesses.show', $business);
     }
 
@@ -54,6 +59,7 @@ class BusinessController extends Controller
         // Load the scans relationship for the business
         $business->load('scans');
 
+        // Pass the business with its scans to the view
         return view('businesses.show', compact('business'));
     }
 
@@ -70,6 +76,7 @@ class BusinessController extends Controller
      */
     public function update(Request $request, Business $business)
     {
+        // Validate the incoming request data for updating the business
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'website' => ['required', 'url', 'max:255'],
@@ -80,8 +87,10 @@ class BusinessController extends Controller
             'notes' => ['nullable', 'string'],
         ]);
 
+        // Update the business record with the validated data
         $business->update($validated);
 
+        // Redirect to the updated business's detail page
         return redirect()->route('businesses.show', $business);
     }
 
@@ -90,8 +99,10 @@ class BusinessController extends Controller
      */
     public function destroy(Business $business)
     {
+        // Delete the specified business record
         $business->delete();
 
+        // Redirect to the list of businesses after deletion
         return redirect()->route('businesses.index');
     }
 }
