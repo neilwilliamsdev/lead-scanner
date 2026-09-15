@@ -84,6 +84,16 @@ class DiscoverBusinesses implements ShouldQueue
                 // Analyse the website
                 $analysisResults = $websiteAnalyzer->analyse($candidate->website);
 
+                // Store the scan results in the database
+                foreach ($analysisResults as $result) {
+                    $candidate->scanResults()->create([
+                        'check' => $result->check,
+                        'passed' => $result->passed,
+                        'message' => $result->message,
+                        'score' => $result->score,
+                    ]);
+                }
+
                 $technologies = $technologyDetectorManager->detect(
                     $candidate->website
                 );

@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\Business;
 use App\Models\DiscoveryRun;
 use App\Models\Technology;
+use App\Models\ScanResult;
 
 class Candidate extends Model
 {
@@ -55,5 +56,15 @@ class Candidate extends Model
     public function technologies()
     {
         return $this->belongsToMany(Technology::class);
+    }
+
+    /**
+     * Define the scan results that belong to the candidate.
+     * 
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\ScanResult>
+     */
+    public function scanResults()
+    {
+        return $this->hasMany(ScanResult::class);
     }
 }
