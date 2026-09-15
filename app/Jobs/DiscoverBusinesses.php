@@ -8,6 +8,7 @@ use App\Models\DiscoveryRun;
 use App\Models\Technology;
 use App\Technology\TechnologyDetectorManager;
 use App\Website\WebsiteChecker;
+use App\Website\WebsiteAnalyzer;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Str;
@@ -24,7 +25,8 @@ class DiscoverBusinesses implements ShouldQueue
     public function handle(
         DiscoverySource $source,
         WebsiteChecker $websiteChecker,
-        TechnologyDetectorManager $technologyDetectorManager
+        TechnologyDetectorManager $technologyDetectorManager,
+        WebsiteAnalyzer $websiteAnalyzer
     ): void {
         // Update the discovery run status to 'running' and set the started_at timestamp
         $this->discoveryRun->update([
@@ -78,6 +80,10 @@ class DiscoverBusinesses implements ShouldQueue
 
             // Detect technologies if the website is reachable
             if ($website['reachable']) {
+
+                // Analyse the website
+                $analysisResults = $websiteAnalyzer->analyse($candidate->website);
+
                 $technologies = $technologyDetectorManager->detect(
                     $candidate->website
                 );
