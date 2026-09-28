@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Discovery\DiscoverySource;
+use App\Jobs\RunLighthouseAudit;
 use App\Models\Business;
 use App\Models\DiscoveryRun;
 use App\Models\Technology;
@@ -110,6 +111,9 @@ class DiscoverBusinesses implements ShouldQueue
 
                     $candidate->technologies()->attach($technologyModel);
                 }
+
+                // Run Lighthouse audit on site
+                RunLighthouseAudit::dispatch($candidate);
             }
         }
 

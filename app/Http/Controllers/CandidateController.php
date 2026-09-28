@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Business;
 use App\Models\Candidate;
+use App\Jobs\RunLighthouseAudit;
 
 class CandidateController extends Controller
 {
