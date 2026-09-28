@@ -20,6 +20,7 @@ Route::get('/scans/{scan}', [ScanController::class, 'show'])->name('scans.show')
 Route::get('/candidates', [CandidateController::class, 'index'])->name('candidates.index');
 Route::get('/candidates/{candidate}', [CandidateController::class, 'show'])->name('candidates.show');
 Route::post('/candidates/{candidate}/accept', [CandidateController::class, 'accept'])->name('candidates.accept');
+Route::post('/candidates/{candidate}/reject', [CandidateController::class, 'reject'])->name('candidates.reject');
 
 // Discovery Run routes
 Route::get('/discovery-runs', [DiscoveryRunController::class, 'index'])->name('discovery-runs.index');

@@ -43,4 +43,19 @@ class CandidateController extends Controller
 
         return redirect()->route('businesses.show', $business);
     }
+
+    /**
+     * Rejects a candidate.
+     *
+     * @param Candidate $candidate
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function reject(Candidate $candidate)
+    {
+        $candidate->update([
+            'status' => 'rejected',
+        ]);
+
+        return redirect()->back();
+    }
 }

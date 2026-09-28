@@ -117,19 +117,26 @@
 
     @if ($candidate->status === 'new')
         <div class="flex gap-3">
-            <form
-                method="POST"
-                action="{{ route('candidates.accept', $candidate) }}"
-            >
+            <form method="POST" action="{{ route('candidates.accept', $candidate) }}">
                 @csrf
 
                 <button
                     type="submit"
-                    class="rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700"
+                    class="rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 hover:cursor-pointer"
                 >
                     Accept candidate
                 </button>
             </form>
+            <form action="{{ route('candidates.reject', $candidate) }}" method="POST">
+            @csrf
+
+            <button 
+                type="submit"                     
+                class="rounded-md bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700 hover:cursor-pointer"
+            >
+                Reject Candidate
+            </button>
+        </form>
         </div>
     @elseif ($candidate->status === 'accepted' && $candidate->business)
         <div class="rounded-lg border border-green-200 bg-green-50 p-4">
