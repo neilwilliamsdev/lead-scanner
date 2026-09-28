@@ -88,7 +88,31 @@
                     @endif
                 </dd>
             </div>
+            <div>
+                <dt class="text-sm font-medium text-gray-500">Website score</dt>
+                <dd class="mt-1 text-lg font-semibold">
+                    {{ $candidate->score() }}/100
+                </dd>
+            </div>
         </dl>
+    </div>
+
+    <div class="mb-8 rounded-lg border border-gray-200 bg-white p-6">
+        <div>
+            <h2 class="text-lg font-semibold">Website analysis</h2>
+
+            <dl class="mt-3 space-y-3">
+                @foreach ($candidate->scanResults as $result)
+                    <div>
+                        <dt class="font-medium">{{ $result->check }}</dt>
+                        <dd class="text-sm text-gray-600">
+                            {{ $result->message }}
+                            ({{ $result->score }})
+                        </dd>
+                    </div>
+                @endforeach
+            </dl>
+        </div>
     </div>
 
     @if ($candidate->status === 'new')

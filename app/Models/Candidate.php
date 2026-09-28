@@ -67,4 +67,14 @@ class Candidate extends Model
     {
         return $this->hasMany(ScanResult::class);
     }
+
+    /**
+     * Calculates the overall website score from the scan results.
+     *
+     * @return int
+     */
+    public function score(): int
+    {
+        return max(0, 100 + $this->scanResults->sum('score'));
+    }
 }
