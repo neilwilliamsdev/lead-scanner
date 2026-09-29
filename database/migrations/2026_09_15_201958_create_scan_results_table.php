@@ -18,6 +18,7 @@ return new class extends Migration
             $table->boolean('passed');
             $table->text('message')->nullable();
             $table->integer('score')->default(0);
+            $table->json('details')->nullable();
             $table->timestamps();
         });
     }

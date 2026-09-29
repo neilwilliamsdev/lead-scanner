@@ -12,10 +12,12 @@ class ScanResult extends Model
         'passed',
         'message',
         'score',
+        'details',
     ];
 
     protected $casts = [
         'passed' => 'boolean',
+        'details' => 'array',
     ];
 
     public function candidate()

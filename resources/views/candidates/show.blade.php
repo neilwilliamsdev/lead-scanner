@@ -101,8 +101,11 @@
         <div>
             <h2 class="text-lg font-semibold">Website analysis</h2>
 
+            {{-- Basic website checks --}}
+            <h3 class="mt-4 font-medium">Basic checks</h3>
+
             <dl class="mt-3 space-y-3">
-                @foreach ($candidate->scanResults as $result)
+                @foreach ($candidate->scanResults->filter(fn ($result) => ! str_starts_with($result->check, 'Lighthouse: ')) as $result)
                     <div>
                         <dt class="font-medium">{{ $result->check }}</dt>
                         <dd class="text-sm text-gray-600">
@@ -112,6 +115,60 @@
                     </div>
                 @endforeach
             </dl>
+
+            {{-- Lighthouse results --}}
+            <h3 class="mt-6 font-medium">Lighthouse audit</h3>
+
+            @php
+                $lighthouseCategories = $candidate->scanResults->filter(
+                    fn ($result) =>
+                        str_starts_with($result->check, 'Lighthouse: ')
+                        && ! str_contains($result->check, ' - ')
+                );
+            @endphp
+
+            @forelse ($lighthouseCategories as $category)
+                @php
+                    $categoryName = substr($category->check, strlen('Lighthouse: '));
+                    $issuePrefix = $category->check . ' - ';
+
+                    $issues = $candidate->scanResults->filter(
+                        fn ($result) => str_starts_with($result->check, $issuePrefix)
+                    );
+                @endphp
+
+                <div class="mt-4 rounded-md border border-gray-200 p-4">
+                    <div class="flex items-center justify-between gap-4">
+                        <h4 class="font-semibold">{{ $categoryName }}</h4>
+
+                        <span class="text-sm font-medium">
+                            {{ $category->message }}
+                        </span>
+                    </div>
+
+                    @if ($issues->isNotEmpty())
+                        <ul class="mt-3 space-y-3">
+                            @foreach ($issues as $issue)
+                                <li class="border-t border-gray-100 pt-3">
+                                    <p class="font-medium text-sm">
+                                        {{ substr($issue->check, strlen($issuePrefix)) }}
+                                    </p>
+
+                                    <p class="mt-1 whitespace-pre-line text-sm text-gray-600">{{ $issue->message }}</p>
+                                </li>
+                            @endforeach
+                        </ul>
+                    @else
+                        <p class="mt-2 text-sm text-gray-600">
+                            No contributing issues recorded for this category.
+                        </p>
+                    @endif
+                </div>
+            @empty
+                <p class="mt-3 text-sm text-gray-600">
+                    Lighthouse results are not available yet.
+                </p>
+            @endforelse
         </div>
     </div>
 

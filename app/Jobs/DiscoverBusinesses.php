@@ -92,6 +92,7 @@ class DiscoverBusinesses implements ShouldQueue
                         'passed' => $result->passed,
                         'message' => $result->message,
                         'score' => $result->score,
+                        'details' => null,
                     ]);
                 }
 
