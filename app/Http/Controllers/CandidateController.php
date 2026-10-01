@@ -14,11 +14,32 @@ class CandidateController extends Controller
         return view('candidates.show', compact('candidate'));
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $candidates = Candidate::latest()->get();
+        $query = Candidate::where('status', 'new');
 
-        return view('candidates.index', compact('candidates'));
+        if ($request->filled('location')) {
+            $query->where('location', $request->location);
+        }
+
+        if ($request->filled('technology')) {
+            $query->whereHas('technologies', function ($technologyQuery) use ($request) {
+                $technologyQuery->where('technologies.id', $request->technology);
+            });
+        }
+
+        $candidates = $query->latest()->get();
+
+        $locations = Candidate::where('status', 'new')
+            ->whereNotNull('location')
+            ->where('location', '!=', '')
+            ->distinct()
+            ->orderBy('location')
+            ->pluck('location');
+
+        $technologies = \App\Models\Technology::orderBy('name')->get();
+
+        return view('candidates.index', compact('candidates', 'locations', 'technologies'));
     }
 
     /**
