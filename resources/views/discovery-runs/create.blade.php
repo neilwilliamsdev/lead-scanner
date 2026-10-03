@@ -35,7 +35,7 @@
                     name="source"
                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
                 >
-                    <option value="test">Test</option>
+                    <option value="google_places">Google Places</option>
                 </select>
 
                 @error('source')

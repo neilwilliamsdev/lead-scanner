@@ -8,6 +8,7 @@ use App\Models\DiscoveryRun;
 use App\Models\Technology;
 use App\Models\WebsiteCheckResult;
 use App\Models\LighthouseResult;
+use App\Models\Theme;
 
 class Candidate extends Model
 {
@@ -57,6 +58,16 @@ class Candidate extends Model
     public function technologies()
     {
         return $this->belongsToMany(Technology::class);
+    }
+
+    /**
+     * Define the themes that belong to the candidate.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany<\App\Models\Theme>
+     */
+    public function themes()
+    {
+        return $this->belongsToMany(Theme::class);
     }
 
     /**

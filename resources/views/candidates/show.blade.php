@@ -94,6 +94,18 @@
                     {{ $candidate->score() }}/100
                 </dd>
             </div>
+            @if ($candidate->technologies->contains(fn ($technology) => $technology->name === 'WordPress'))
+                <div>
+                    <dt class="text-sm font-medium text-gray-500">Theme</dt>
+                    <dd class="mt-1">
+                        @if ($candidate->themes->isNotEmpty())
+                            {{ $candidate->themes->pluck('name')->join(', ') }}
+                        @else
+                            Unknown
+                        @endif
+                    </dd>
+                </div>
+            @endif
         </dl>
     </div>
 

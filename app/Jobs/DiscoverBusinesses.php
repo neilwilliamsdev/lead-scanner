@@ -13,6 +13,8 @@ use App\Website\WebsiteAnalyzer;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Str;
+use App\Models\Theme;
+use App\Technology\Detectors\ThemeDetector;
 
 class DiscoverBusinesses implements ShouldQueue
 {
@@ -27,7 +29,8 @@ class DiscoverBusinesses implements ShouldQueue
         DiscoverySource $source,
         WebsiteChecker $websiteChecker,
         TechnologyDetectorManager $technologyDetectorManager,
-        WebsiteAnalyzer $websiteAnalyzer
+        WebsiteAnalyzer $websiteAnalyzer,
+        ThemeDetector $themeDetector,
     ): void {
         // Update the discovery run status to 'running' and set the started_at timestamp
         $this->discoveryRun->update([
@@ -115,6 +118,26 @@ class DiscoverBusinesses implements ShouldQueue
 
                 // Run Lighthouse audit on site
                 RunLighthouseAudit::dispatch($candidate);
+
+                // Detect the theme of the website
+                if (collect($technologies)->contains(
+                    fn ($technology) => $technology->name === 'WordPress'
+                )) {
+                    $theme = $themeDetector->detect($candidate->website);
+
+                    if ($theme) {
+                        $themeModel = Theme::firstOrCreate(
+                            [
+                                'slug' => Str::slug($theme),
+                            ],
+                            [
+                                'name' => $theme,
+                            ]
+                        );
+
+                        $candidate->themes()->attach($themeModel);
+                    }
+                }
             }
         }
 

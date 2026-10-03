@@ -11,13 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('lighthouse_results', function (Blueprint $table) {
-            $table->id();
+        Schema::create('candidate_theme', function (Blueprint $table) {
             $table->foreignId('candidate_id')->constrained()->cascadeOnDelete();
-            $table->string('check');
-            $table->text('message')->nullable();
-            $table->json('details')->nullable();
-            $table->timestamps();
+            $table->foreignId('theme_id')->constrained()->cascadeOnDelete();
+
+            $table->primary(['candidate_id', 'theme_id']);
         });
     }
 
@@ -26,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('lighthouse_results');
+        Schema::dropIfExists('candidate_theme');
     }
 };
