@@ -42,13 +42,12 @@ class RunLighthouseAudit implements ShouldQueue
                 : null;
 
             // Determine the score to store for the category
-            $this->candidate->scanResults()->create([
+            $this->candidate->lighthouseResults()->create([
                 'check' => 'Lighthouse: ' . $category['title'],
-                'passed' => true,
                 'message' => $categoryScore !== null
                     ? $category['title'] . ' score: ' . $categoryScore . '/100'
                     : $category['title'] . ' score unavailable',
-                'score' => 0,
+                'score' => $categoryScore ?? 0,
                 'details' => $category,
             ]);
 
@@ -77,9 +76,8 @@ class RunLighthouseAudit implements ShouldQueue
                 }
 
                 // Store the individual audit result for the candidate
-                $this->candidate->scanResults()->create([
+                $this->candidate->lighthouseResults()->create([
                     'check' => 'Lighthouse: ' . $category['title'] . ' - ' . $audit['title'],
-                    'passed' => false,
                     'message' => $message,
                     'score' => 0,
                     'details' => $audit,

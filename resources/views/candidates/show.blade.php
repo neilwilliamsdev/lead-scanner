@@ -105,7 +105,7 @@
             <h3 class="mt-4 font-medium">Basic checks</h3>
 
             <dl class="mt-3 space-y-3">
-                @foreach ($candidate->scanResults->filter(fn ($result) => ! str_starts_with($result->check, 'Lighthouse: ')) as $result)
+                @foreach ($candidate->websiteCheckResults as $result)
                     <div>
                         <dt class="font-medium">{{ $result->check }}</dt>
                         <dd class="text-sm text-gray-600">
@@ -120,7 +120,7 @@
             <h3 class="mt-6 font-medium">Lighthouse audit</h3>
 
             @php
-                $lighthouseCategories = $candidate->scanResults->filter(
+                $lighthouseCategories = $candidate->lighthouseResults->filter(
                     fn ($result) =>
                         str_starts_with($result->check, 'Lighthouse: ')
                         && ! str_contains($result->check, ' - ')
@@ -143,7 +143,7 @@
                         default => 'bg-red-100 text-red-800',
                     };
 
-                    $issues = $candidate->scanResults->filter(
+                    $issues = $candidate->lighthouseResults->filter(
                         fn ($result) => str_starts_with($result->check, $issuePrefix)
                     );
                 @endphp

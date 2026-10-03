@@ -6,7 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\Business;
 use App\Models\DiscoveryRun;
 use App\Models\Technology;
-use App\Models\ScanResult;
+use App\Models\WebsiteCheckResult;
+use App\Models\LighthouseResult;
 
 class Candidate extends Model
 {
@@ -59,13 +60,23 @@ class Candidate extends Model
     }
 
     /**
-     * Define the scan results that belong to the candidate.
-     * 
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\ScanResult>
+     * Define the website check results that belong to the candidate.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\WebsiteCheckResult>
      */
-    public function scanResults()
+    public function websiteCheckResults()
     {
-        return $this->hasMany(ScanResult::class);
+        return $this->hasMany(WebsiteCheckResult::class);
+    }
+
+    /**
+     * Define the lighthouse results that belong to the candidate.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\LighthouseResult>
+     */
+    public function lighthouseResults()
+    {
+        return $this->hasMany(LighthouseResult::class);
     }
 
     /**
@@ -75,6 +86,6 @@ class Candidate extends Model
      */
     public function score(): int
     {
-        return max(0, 100 + $this->scanResults->sum('score'));
+        return max(0, 100 + $this->websiteCheckResults->sum('score'));
     }
 }

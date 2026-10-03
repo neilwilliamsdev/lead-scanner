@@ -87,7 +87,7 @@ class DiscoverBusinesses implements ShouldQueue
 
                 // Store the scan results in the database
                 foreach ($analysisResults as $result) {
-                    $candidate->scanResults()->create([
+                    $candidate->websiteCheckResults()->create([
                         'check' => $result->check,
                         'passed' => $result->passed,
                         'message' => $result->message,
