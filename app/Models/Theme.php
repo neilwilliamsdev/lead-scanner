@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Business;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
@@ -12,8 +13,8 @@ class Theme extends Model
         'slug',
     ];
 
-    public function candidates(): BelongsToMany
+    public function businesses(): BelongsToMany
     {
-        return $this->belongsToMany(Candidate::class);
+        return $this->belongsToMany(Business::class);
     }
 }

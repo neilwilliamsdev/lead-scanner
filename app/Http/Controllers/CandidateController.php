@@ -23,7 +23,7 @@ class CandidateController extends Controller
         }
 
         if ($request->filled('technology')) {
-            $query->whereHas('technologies', function ($technologyQuery) use ($request) {
+            $query->whereHas('business.technologies', function ($technologyQuery) use ($request) {
                 $technologyQuery->where('technologies.id', $request->technology);
             });
         }
@@ -51,18 +51,15 @@ class CandidateController extends Controller
      */
     public function accept(Candidate $candidate)
     {
-        $business = Business::create([
-            'name' => $candidate->name,
-            'website' => $candidate->website,
-            'location' => $candidate->location,
-            'industry' => $candidate->category,
-        ]);
+        // Retrieve the associated business for the candidate
+        $business = $candidate->business;
 
+        // Update business status
         $candidate->update([
             'status' => 'accepted',
-            'business_id' => $business->id,
         ]);
 
+        // Redirect to the associated business page
         return redirect()->route('businesses.show', $business);
     }
 

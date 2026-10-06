@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('lighthouse_results', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('candidate_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('business_id')->constrained()->cascadeOnDelete();
             $table->string('check');
             $table->text('message')->nullable();
             $table->json('details')->nullable();

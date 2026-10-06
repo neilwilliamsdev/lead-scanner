@@ -12,8 +12,10 @@ class BusinessController extends Controller
      */
     public function index()
     {
-        // Retrieve all businesses ordered by latest
-        $businesses = Business::latest()->get();
+        // Retrieve all businesses ordered by latest that have been accepted as targets
+        $businesses = Business::whereHas('candidates', function ($candidateQuery) {
+            $candidateQuery->where('status', 'accepted');
+        })->latest()->get();
 
         // Pass the retrieved businesses to the view
         return view('businesses.index', compact('businesses'));

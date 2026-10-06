@@ -93,8 +93,8 @@
                         <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
                             Status
                         </th>
-                        <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
-                            Score
+                        <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">
+                            Potential
                         </th>
                     </tr>
                 </thead>
@@ -120,7 +120,7 @@
                             </td>
                             
                             <td class="px-6 py-4 text-sm text-gray-600">
-                                {{ $candidate->technologies->pluck('name')->join(', ') ?: '—' }}
+                                {{ $candidate->business->technologies->pluck('name')->join(', ') ?: '—' }}
                             </td>
 
                             @php
@@ -137,18 +137,25 @@
                                 </span>
                             </td>
                             @php
-                                $score = $candidate->score();
+                                $scores = collect(['Performance', 'Accessibility', 'Best Practices', 'SEO'])
+                                    ->map(fn ($category) => $candidate->lighthouseCategoryScore($category))
+                                    ->filter(fn ($score) => $score !== null);
 
-                                $scoreClass = match (true) {
-                                    $score >= 90 => 'bg-green-100 text-green-800',
-                                    $score >= 50 => 'bg-amber-100 text-amber-800',
-                                    default => 'bg-red-100 text-red-800',
+                                $potentialScore = $scores->isNotEmpty()
+                                    ? (int) round($scores->average())
+                                    : null;
+
+                                $potential = match (true) {
+                                    $potentialScore === null => ['label' => '—', 'class' => 'bg-gray-100 text-gray-700'],
+                                    $potentialScore >= 80 => ['label' => 'High', 'class' => 'bg-green-100 text-green-800'],
+                                    $potentialScore >= 50 => ['label' => 'Medium', 'class' => 'bg-amber-100 text-amber-800'],
+                                    default => ['label' => 'Low', 'class' => 'bg-red-100 text-red-800'],
                                 };
                             @endphp
 
                             <td class="px-6 py-4">
-                                <span class="rounded-full px-3 py-1 text-sm font-semibold {{ $scoreClass }}">
-                                    {{ $score }}/100
+                                <span class="rounded-full px-3 py-1 text-sm font-semibold {{ $potential['class'] }}">
+                                    {{ $potential['label'] }}
                                 </span>
                             </td>
                         </tr>

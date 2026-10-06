@@ -7,14 +7,14 @@ use App\Jobs\RunLighthouseAudit;
 use App\Models\Business;
 use App\Models\DiscoveryRun;
 use App\Models\Technology;
+use App\Models\Theme;
+use App\Technology\Detectors\ThemeDetector;
 use App\Technology\TechnologyDetectorManager;
-use App\Website\WebsiteChecker;
 use App\Website\WebsiteAnalyzer;
+use App\Website\WebsiteChecker;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Str;
-use App\Models\Theme;
-use App\Technology\Detectors\ThemeDetector;
 
 class DiscoverBusinesses implements ShouldQueue
 {
@@ -88,14 +88,13 @@ class DiscoverBusinesses implements ShouldQueue
                 // Analyse the website
                 $analysisResults = $websiteAnalyzer->analyse($candidate->website);
 
-                // Store the scan results in the database
+                // Store website checks against the business
                 foreach ($analysisResults as $result) {
-                    $candidate->websiteCheckResults()->create([
+                    $business->websiteCheckResults()->create([
                         'check' => $result->check,
                         'passed' => $result->passed,
                         'message' => $result->message,
                         'score' => $result->score,
-                        'details' => null,
                     ]);
                 }
 
@@ -113,11 +112,11 @@ class DiscoverBusinesses implements ShouldQueue
                         ]
                     );
 
-                    $candidate->technologies()->attach($technologyModel);
+                    $business->technologies()->attach($technologyModel);
                 }
 
                 // Run Lighthouse audit on site
-                RunLighthouseAudit::dispatch($candidate);
+                RunLighthouseAudit::dispatch($business);
 
                 // Detect the theme of the website
                 if (collect($technologies)->contains(
@@ -135,7 +134,7 @@ class DiscoverBusinesses implements ShouldQueue
                             ]
                         );
 
-                        $candidate->themes()->attach($themeModel);
+                        $business->themes()->attach($themeModel);
                     }
                 }
             }

@@ -2,7 +2,7 @@
 
 namespace App\Jobs;
 
-use App\Models\Candidate;
+use App\Models\Business;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use App\Website\LighthouseRunner;
@@ -12,23 +12,22 @@ class RunLighthouseAudit implements ShouldQueue
     use Queueable;
 
     /**
-     * The candidate to audit.
+     * The business to audit.
      *
-     * @var Candidate
+     * @var Business
      */
     public function __construct(
-        public Candidate $candidate
+        public Business $business
     ) {
     }
-    
+
     /**
      * Execute the job.
      */
     public function handle(LighthouseRunner $lighthouse): void
     {
-        
-        // Run the Lighthouse audit for the candidate's website
-        $json = $lighthouse->run($this->candidate->website);
+        // Run the Lighthouse audit for the business website
+        $json = $lighthouse->run($this->business->website);
 
         // Decode the JSON result into an associative array
         $data = json_decode($json, true);
@@ -41,13 +40,12 @@ class RunLighthouseAudit implements ShouldQueue
                 ? round($category['score'] * 100)
                 : null;
 
-            // Determine the score to store for the category
-            $this->candidate->lighthouseResults()->create([
+            // Store the category result against the business
+            $this->business->lighthouseResults()->create([
                 'check' => 'Lighthouse: ' . $category['title'],
                 'message' => $categoryScore !== null
                     ? $category['title'] . ' score: ' . $categoryScore . '/100'
                     : $category['title'] . ' score unavailable',
-                'score' => $categoryScore ?? 0,
                 'details' => $category,
             ]);
 
@@ -75,11 +73,10 @@ class RunLighthouseAudit implements ShouldQueue
                     $message = $audit['displayValue'] . "\n" . $message;
                 }
 
-                // Store the individual audit result for the candidate
-                $this->candidate->lighthouseResults()->create([
+                // Store the individual audit result against the business
+                $this->business->lighthouseResults()->create([
                     'check' => 'Lighthouse: ' . $category['title'] . ' - ' . $audit['title'],
                     'message' => $message,
-                    'score' => 0,
                     'details' => $audit,
                 ]);
             }

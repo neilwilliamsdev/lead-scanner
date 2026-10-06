@@ -5,10 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Business;
 use App\Models\DiscoveryRun;
-use App\Models\Technology;
-use App\Models\WebsiteCheckResult;
-use App\Models\LighthouseResult;
-use App\Models\Theme;
 
 class Candidate extends Model
 {
@@ -51,52 +47,23 @@ class Candidate extends Model
     }
 
     /**
-     * Define the technologies that belong to the candidate.
-     * 
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany<\App\Models\Technology>
-     */
-    public function technologies()
-    {
-        return $this->belongsToMany(Technology::class);
-    }
-
-    /**
-     * Define the themes that belong to the candidate.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany<\App\Models\Theme>
-     */
-    public function themes()
-    {
-        return $this->belongsToMany(Theme::class);
-    }
-
-    /**
-     * Define the website check results that belong to the candidate.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\WebsiteCheckResult>
-     */
-    public function websiteCheckResults()
-    {
-        return $this->hasMany(WebsiteCheckResult::class);
-    }
-
-    /**
-     * Define the lighthouse results that belong to the candidate.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\LighthouseResult>
-     */
-    public function lighthouseResults()
-    {
-        return $this->hasMany(LighthouseResult::class);
-    }
-
-    /**
      * Calculates the overall website score from the scan results.
      *
      * @return int
      */
     public function score(): int
     {
-        return max(0, 100 + $this->websiteCheckResults->sum('score'));
+        return $this->business?->score() ?? 0;
+    }
+
+    /**
+     * Get the Lighthouse score for a specific category.
+     *
+     * @param string $category
+     * @return integer|null
+     */
+    public function lighthouseCategoryScore(string $category): ?int
+    {
+        return $this->business?->lighthouseCategoryScore($category);
     }
 }

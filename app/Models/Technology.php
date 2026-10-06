@@ -2,7 +2,7 @@
 
 namespace App\Models;
     
-use App\Models\Candidate;
+use App\Models\Business;
 use Illuminate\Database\Eloquent\Model;
 
 class Technology extends Model
@@ -14,12 +14,12 @@ class Technology extends Model
     ];
     
     /**
-     * The candidates that belong to the technology.
+     * The businesses that belong to the technology.
      * 
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany<\App\Models\Candidate>
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany<\App\Models\Business>
      */
-    public function candidates()
+    public function businesses()
     {
-        return $this->belongsToMany(Candidate::class);
+        return $this->belongsToMany(Business::class);
     }
 }

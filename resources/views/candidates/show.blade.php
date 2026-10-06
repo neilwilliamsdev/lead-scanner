@@ -3,10 +3,10 @@
 @section('content')
     <div class="mb-8">
         <a
-            href="{{ route('businesses.index') }}"
+            href="{{ route('candidates.index') }}"
             class="text-sm text-blue-600 hover:text-blue-800 hover:underline"
         >
-            ← Businesses
+            ← Candidates
         </a>
 
         <h1 class="mt-2 text-2xl font-semibold">
@@ -81,8 +81,8 @@
             <div>
                 <dt class="text-sm font-medium text-gray-500">Technologies</dt>
                 <dd class="mt-1">
-                    @if ($candidate->technologies->isNotEmpty())
-                        {{ $candidate->technologies->pluck('name')->join(', ') }}
+                    @if ($candidate->business->technologies->isNotEmpty())
+                        {{ $candidate->business->technologies->pluck('name')->join(', ') }}
                     @else
                         Unknown
                     @endif
@@ -94,12 +94,12 @@
                     {{ $candidate->score() }}/100
                 </dd>
             </div>
-            @if ($candidate->technologies->contains(fn ($technology) => $technology->name === 'WordPress'))
+            @if ($candidate->business->technologies->contains(fn ($technology) => $technology->name === 'WordPress'))
                 <div>
                     <dt class="text-sm font-medium text-gray-500">Theme</dt>
                     <dd class="mt-1">
-                        @if ($candidate->themes->isNotEmpty())
-                            {{ $candidate->themes->pluck('name')->join(', ') }}
+                        @if ($candidate->business->themes->isNotEmpty())
+                            {{ $candidate->business->themes->pluck('name')->join(', ') }}
                         @else
                             Unknown
                         @endif
@@ -116,8 +116,8 @@
             {{-- Basic website checks --}}
             <h3 class="mt-4 font-medium">Basic checks</h3>
 
-            <dl class="mt-3 space-y-3">
-                @foreach ($candidate->websiteCheckResults as $result)
+            <dl class="flex flex-wrap justify-between gap-4 mt-3 space-y-3">
+                @foreach ($candidate->business->websiteCheckResults as $result)
                     <div>
                         <dt class="font-medium">{{ $result->check }}</dt>
                         <dd class="text-sm text-gray-600">
@@ -132,7 +132,7 @@
             <h3 class="mt-6 font-medium">Lighthouse audit</h3>
 
             @php
-                $lighthouseCategories = $candidate->lighthouseResults->filter(
+                $lighthouseCategories = $candidate->business->lighthouseResults->filter(
                     fn ($result) =>
                         str_starts_with($result->check, 'Lighthouse: ')
                         && ! str_contains($result->check, ' - ')
@@ -155,19 +155,22 @@
                         default => 'bg-red-100 text-red-800',
                     };
 
-                    $issues = $candidate->lighthouseResults->filter(
+                    $issues = $candidate->business->lighthouseResults->filter(
                         fn ($result) => str_starts_with($result->check, $issuePrefix)
                     );
                 @endphp
 
-                <div class="mt-4 rounded-md border border-gray-200 p-4">
-                    <div class="flex items-center justify-between gap-4">
-                        <h4 class="font-semibold">{{ $categoryName }}</h4>
+                <details class="mt-4 rounded-md border border-gray-200 p-4">
+                    <summary class="flex cursor-pointer list-none items-center justify-between gap-4">
+                        <div class="flex items-center gap-2">
+                            <span class="text-gray-400">▸</span>
+                            <h4 class="font-semibold">{{ $categoryName }}</h4>
+                        </div>
 
                         <span class="rounded-full px-3 py-1 text-sm font-semibold {{ $scoreClass }}">
                             {{ $categoryScore !== null ? $categoryScore . '/100' : 'N/A' }}
                         </span>
-                    </div>
+                    </summary>
 
                     @if ($issues->isNotEmpty())
                         <ul class="mt-3 space-y-3">
@@ -275,7 +278,7 @@
                             No contributing issues recorded for this category.
                         </p>
                     @endif
-                </div>
+                </details>
             @empty
                 <p class="mt-3 text-sm text-gray-600">
                     Lighthouse results are not available yet.
