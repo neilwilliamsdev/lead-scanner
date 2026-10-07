@@ -22,7 +22,8 @@ class AppServiceProvider extends ServiceProvider
             \App\Technology\TechnologyDetectorManager::class,
             function () {
                 return new \App\Technology\TechnologyDetectorManager([
-                    new \App\Technology\Detectors\WordPressDetector(),
+                    new \App\Technology\Detectors\WordPress(),
+                    new \App\Technology\Detectors\WooCommerce(),
                 ]);
             }
         );
