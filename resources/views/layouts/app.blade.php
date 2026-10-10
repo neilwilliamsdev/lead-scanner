@@ -18,25 +18,23 @@
             >
                 Lead Scanner
             </a>
-
             <a
-                href="{{ route('businesses.index') }}"
+                href="{{ route('discovery-runs.index') }}"
                 class="text-sm font-medium text-gray-600 hover:text-gray-900"
             >
-                Businesses
+                Discovery Runs
             </a>
-
             <a
                 href="{{ route('candidates.index') }}"
                 class="text-sm font-medium text-gray-600 hover:text-gray-900"
             >
                 Candidates
             </a>
-            <a
-                href="{{ route('discovery-runs.index') }}"
+                        <a
+                href="{{ route('businesses.index') }}"
                 class="text-sm font-medium text-gray-600 hover:text-gray-900"
             >
-                Discovery Runs
+                Targets
             </a>
         </nav>
     </header>

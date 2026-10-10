@@ -3,7 +3,7 @@
 @section('content')
     <div class="mb-8 flex items-center justify-between">
         <div>
-            <h1 class="text-2xl font-semibold">Businesses</h1>
+            <h1 class="text-2xl font-semibold">Targets</h1>
             <p class="mt-1 text-sm text-gray-500">
                 Businesses you've accepted as potential leads.
             </p>
