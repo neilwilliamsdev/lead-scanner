@@ -97,6 +97,27 @@ class BusinessController extends Controller
     }
 
     /**
+     * Update the status of the specified business.
+     *
+     * @param Request $request
+     * @param Business $business
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function updateStatus(Request $request, Business $business)
+    {
+        // Validate the incoming request data for updating the status
+        $validated = $request->validate([
+            'status' => ['required', 'in:new,reviewing,ready_to_contact,contacted,interested,follow_up,won,lost'],
+        ]);
+
+        // Update the business status with the validated data
+        $business->update($validated);
+
+        // Redirect to the updated business's detail page
+        return redirect()->route('businesses.show', $business);
+    }
+
+    /**
      * Remove the specified resource from storage.
      */
     public function destroy(Business $business)

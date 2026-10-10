@@ -12,6 +12,7 @@ Route::get('/', function () {
 
 // Business routes
 Route::resource('businesses', BusinessController::class);
+Route::patch('/businesses/{business}/update-status', [BusinessController::class, 'updateStatus'])->name('businesses.update-status');
 
 // Scan routes
 Route::get('/scans/{scan}', [ScanController::class, 'show'])->name('scans.show');

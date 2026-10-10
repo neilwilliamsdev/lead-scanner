@@ -61,9 +61,25 @@
                                 {{ $business->location ?? '—' }}
                             </td>
 
-                            <td class="px-6 py-4 text-sm text-gray-600">
-                                {{ $business->status }}
+                            @php
+                                $statusClasses = [
+                                    'new' => 'bg-gray-100 text-gray-700',
+                                    'reviewing' => 'bg-blue-100 text-blue-800',
+                                    'ready_to_contact' => 'bg-indigo-100 text-indigo-800',
+                                    'contacted' => 'bg-purple-100 text-purple-800',
+                                    'interested' => 'bg-green-100 text-green-800',
+                                    'follow_up' => 'bg-amber-100 text-amber-800',
+                                    'won' => 'bg-emerald-100 text-emerald-800',
+                                    'lost' => 'bg-red-100 text-red-800',
+                                ];
+                            @endphp
+
+                            <td class="px-6 py-4">
+                                <span class="rounded-full px-3 py-1 text-sm font-semibold {{ $statusClasses[$business->status] ?? 'bg-gray-100 text-gray-700' }}">
+                                    {{ str($business->status)->replace('_', ' ')->title() }}
+                                </span>
                             </td>
+
                         </tr>
                     @endforeach
                 </tbody>
