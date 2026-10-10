@@ -24,6 +24,10 @@ class AppServiceProvider extends ServiceProvider
                 return new \App\Technology\TechnologyDetectorManager([
                     new \App\Technology\Detectors\WordPress(),
                     new \App\Technology\Detectors\WooCommerce(),
+                    new \App\Technology\Detectors\Shopify(),
+                    new \App\Technology\Detectors\Squarespace(),
+                    new \App\Technology\Detectors\Wix(),
+                    new \App\Technology\Detectors\Webflow(),
                 ]);
             }
         );
