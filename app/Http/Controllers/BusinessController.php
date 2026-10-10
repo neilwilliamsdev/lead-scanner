@@ -86,31 +86,11 @@ class BusinessController extends Controller
             'location' => ['nullable', 'string', 'max:255'],
             'contact_name' => ['nullable', 'string', 'max:255'],
             'contact_email' => ['nullable', 'email', 'max:255'],
+            'status' => ['required', 'in:new,reviewing,ready-to-contact,contacted,interested,follow-up,won,lost'],
             'notes' => ['nullable', 'string'],
         ]);
 
         // Update the business record with the validated data
-        $business->update($validated);
-
-        // Redirect to the updated business's detail page
-        return redirect()->route('businesses.show', $business);
-    }
-
-    /**
-     * Update the status of the specified business.
-     *
-     * @param Request $request
-     * @param Business $business
-     * @return \Illuminate\Http\RedirectResponse
-     */
-    public function updateStatus(Request $request, Business $business)
-    {
-        // Validate the incoming request data for updating the status
-        $validated = $request->validate([
-            'status' => ['required', 'in:new,reviewing,ready_to_contact,contacted,interested,follow_up,won,lost'],
-        ]);
-
-        // Update the business status with the validated data
         $business->update($validated);
 
         // Redirect to the updated business's detail page

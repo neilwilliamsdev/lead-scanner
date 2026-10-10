@@ -41,30 +41,11 @@
 
             <div>
                 <dt class="text-sm font-medium text-gray-500">Status</dt>
-                <form action="{{ route('businesses.update-status', $business) }}" method="POST" class="flex items-center gap-2"> 
-                    @csrf 
-                    @method('PATCH') 
-
-                    <select name="status" class="rounded-md border-gray-300 text-sm shadow-sm focus:border-blue-500 focus:ring-blue-500"> 
-                        @foreach (
-                            [ 
-                                'new' => 'New', 
-                                'reviewing' => 'Reviewing', 
-                                'ready-to-contact' => 'Ready to contact', 
-                                'contacted' => 'Contacted', 
-                                'interested' => 'Interested', 
-                                'follow-up' => 'Follow-up', 
-                                'won' => 'Won', 
-                                'lost' => 'Lost', 
-                            ] 
-                            as $value => $label) 
-                            <option value="{{ $value }}" @selected($business->status === $value)> {{ $label }} </option> 
-                        @endforeach 
-                    </select> 
-                    <button type="submit" class="rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white hover:bg-blue-700" > 
-                        Save 
-                    </button> 
-                </form>
+                <dd class="mt-1">
+                    <span class="capitalize rounded-full px-3 py-1 text-sm font-semibold {{ $business->status_classes }}">
+                        {{ $business->status }}
+                    </span>
+                </dd>
             </div>
 
             @if ($business->industry)
